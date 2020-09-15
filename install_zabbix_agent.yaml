@@ -1,0 +1,37 @@
+---
+    # Initialize, turn off firewall and SELINUX
+    - hosts: zabbix_client
+      tasks:
+        - name: off selinux
+          shell: setenforce 0
+        - name: seline modify enforcing
+          lineinfile:
+            dest: /etc/selinux/config
+            regexp: '^SELINUX='
+            line: 'SELINUX=disabled'
+        - name: seline firealld
+          shell: systemctl stop firewalld && systemctl disable firewalld
+    # Install ZABBIX? Client
+    - hosts: zabbix_client
+      vars: 
+        zabbix_server_ip: 172.16.9.141
+        zabbix_agent_ip: 172.16.9.142
+    
+      tasks:
+        - name: install zabbix_client
+          shell: rpm -ivh http://repo.zabbix.com/zabbix/3.4/rhel/7/x86_64/zabbix-agent-3.4.15-1.el7.x86_64.rpm  
+        - name: Install zabbix agent
+          shell: yum -y install zabbix-agent
+        - name: modify zabbix server ip address
+          shell: sed -i 's#Server=127.0.0.1#Server='{{zabbix_server_ip}}'#g' /etc/zabbix/zabbix_agentd.conf
+        - name: modify zabbix server active ip addr
+          shell: sed -i 's/ServerActive=127.0.0.1/ServerActive='{{zabbix_server_ip}}'/g' /etc/zabbix/zabbix_agentd.conf
+        - name: Enable remote command execution
+          shell: sed -i 's/# EnableRemoteCommands=0/EnableRemoteCommands=1'/g /etc/zabbix/zabbix_agentd.conf
+        - name: Enable remote command logs
+          shell: sed -i 's/# LogRemoteCommands=0/LogRemoteCommands=1'/g /etc/zabbix/zabbix_agentd.conf
+        - name: modify zabbix agent hostname
+          shell: sed -i 's/Hostname=Zabbix server/Hostname='{{zabbix_agent_ip}}'/g' /etc/zabbix/zabbix_agentd.conf
+        - name: enable zabbix-agent
+          shell: systemctl start zabbix-agent ;systemctl enable zabbix-agent
+          
