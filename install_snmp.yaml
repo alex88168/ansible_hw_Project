@@ -1,28 +1,36 @@
----
-    - hosts: all
-      remote_user: ravi
-      become: yes
-      become_method: sudo
-      gather_facts: yes
-      vars:
-      tasks:
+-
+    name: 'Install snmp and Config'
+    hosts: all
+    gather_facts: false
+    vars:
+    tasks:
     
-        - name: Install snmp packages
-          yum: name=net-snmp state=latest
+        - name: Install snmp 
+          yum: 
+            name:
+              - net-snmp
+              - net-snmp-utils
     
+        - name: Configure SNMP v2c Community
+          lineinfile:
+          path: /etc/snmp/snmpd.conf
+          regexp: 'com2sec notConfigUser  default       public'
+          line: 'com2sec notConfigUser  default       evatarpublic'
+        
         - name: Enable snmp service
           service: name=snmpd enabled=yes
-          notify: Restart snmpd
-    
-        - name: Download snmpd config file
-          get_url:
-          url: http://192.168.2.8/snmpd.conf
-          dest: /tmp/snmpd.conf
-    
-          copy: src=/tmp/snmpd.conf dest=/etc/snmp/snmpd.conf owner=root group=root mode=644
-          notify: Restart snmpd
-    
-      handlers:
+        
         - name: Restart snmpd
-          action: service name=snmpd state=restarted
+          action: service name=snmpd state=restarted  
+ 
+        
+        # - name: Download snmpd config file
+        #   get_url:
+        #   url: http://192.168.2.8/snmpd.conf
+        #   dest: /tmp/snmpd.conf
+    
+          # copy: src=/tmp/snmpd.conf dest=/etc/snmp/snmpd.conf owner=root group=root mode=644
+          # notify: Restart snmpd
+    
+        
           

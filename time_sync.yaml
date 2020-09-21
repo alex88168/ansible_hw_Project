@@ -1,1 +1,17 @@
----
+-
+   name: Time_Sync
+   host: all
+   task:
+     - name: install sntp client 
+       yum: name=ntp 
+    
+     - name: sync time
+       shell: sudo ntpdate time.stdtime.gov.tw
+     
+     - name: Start ntpd
+       shell: sudo systemctl start ntpd
+     
+     - name: Enable ntpd
+       shell: sudo systemctl enable ntpd
+       
+
