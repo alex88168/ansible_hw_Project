@@ -1,7 +1,7 @@
 -
-   name: Time_Sync
-   host: all
-   task:
+- name: Time_Sync
+  host: all
+  task:
      - name: install sntp client 
        yum: name=ntp 
     

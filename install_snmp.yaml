@@ -1,27 +1,23 @@
 -
-    name: 'Install snmp and Config'
-    hosts: all
-    gather_facts: false
-    vars:
-    tasks:
-    
-        - name: Install snmp 
-          yum: 
-            name:
-              - net-snmp
-              - net-snmp-utils
-    
-        - name: Configure SNMP v2c Community
-          lineinfile:
-          path: /etc/snmp/snmpd.conf
-          regexp: 'com2sec notConfigUser  default       public'
-          line: 'com2sec notConfigUser  default       evatarpublic'
-        
-        - name: Enable snmp service
-          service: name=snmpd enabled=yes
-        
-        - name: Restart snmpd
-          action: service name=snmpd state=restarted  
+- name: 'Install snmp and Config'
+  hosts: all
+  gather_facts: false
+  vars:
+  tasks:
+   - name: Install snmp 
+     yum: 
+     name:
+        - net-snmp
+        - net-snmp-utils
+   - name: Configure SNMP v2c Community
+     lineinfile:
+     path: /etc/snmp/snmpd.conf
+     regexp: 'com2sec notConfigUser  default       public'
+     line: 'com2sec notConfigUser  default       evatarpublic'
+   - name: Enable snmp service
+     service: name=snmpd enabled=yes
+   - name: Restart snmpd
+     action: service name=snmpd state=restarted  
  
         
         # - name: Download snmpd config file

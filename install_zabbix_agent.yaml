@@ -1,12 +1,10 @@
 - 
-  name: 'Install zabbix agent'
+- name: 'Install zabbix agent'
   hosts: all
   vars: 
-        zabbix_server_ip: 113.196.57.243
+    zabbix_server_ip: 113.196.57.243
         # zabbix_hostname = 
-        
-    
-  tasks:
+   tasks:
         - name: install zabbix_client
           shell: rpm -ivh http://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-agent-5.0.3-1.el7.x86_64.rpm 
         
